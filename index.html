@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberMovies — Discover your next movie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="atmosphere" aria-hidden="true"></div>
+
+  <!-- ============================= NAVBAR ============================= -->
+  <header id="navbar" class="navbar">
+    <div class="navbar__inner">
+      <a href="#top" class="navbar__brand">CYBERMOVIES</a>
+
+      <nav class="navbar__links" id="navbar-links" aria-label="Primary">
+        <a href="#top" class="navbar__link" data-nav="home">Home</a>
+        <a href="#discover-section" class="navbar__link" data-nav="discover">Discover</a>
+        <button type="button" class="navbar__link navbar__link--button" data-sort="popular">Popular</button>
+        <button type="button" class="navbar__link navbar__link--button" data-sort="toprated">Top Rated</button>
+        <button type="button" class="navbar__link navbar__link--button" data-sort="nowplaying">Now Playing</button>
+      </nav>
+
+      <!-- Search is part of the navigation on purpose: users can search from anywhere. -->
+      <form id="search-form" class="search-form navbar__search" aria-label="Movie search">
+        <label for="search-input" class="sr-only">Movie title</label>
+        <div class="search-row">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input
+            type="text"
+            id="search-input"
+            name="search-input"
+            class="search-input"
+            placeholder="Search movies..."
+            autocomplete="off"
+            enterkeyhint="search"
+          />
+          <button type="submit" id="search-button" class="search-button">Search</button>
+        </div>
+      </form>
+
+      <div class="navbar__actions">
+        <button type="button" id="nav-watchlist-button" class="navbar__icon-button" aria-label="View watchlist">
+          <span aria-hidden="true">♡</span>
+          <span id="watchlist-count" class="watchlist-count" hidden>0</span>
+        </button>
+        <button
+          type="button"
+          id="nav-menu-toggle"
+          class="navbar__menu-toggle"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="navbar-mobile-menu"
+        >
+          <span aria-hidden="true">☰</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- <div id="navbar-mobile-menu" aria-label="Mobile menu" class="navbar__mobile-menu" hidden>
+      <a href="#top" class="navbar__mobile-link" data-nav="home">Home</a>
+      <a href="#discover-section" class="navbar__mobile-link" data-nav="discover">Discover</a>
+      <button type="button" class="navbar__mobile-link navbar__mobile-link--button" data-sort="popular">Popular</button>
+      <button type="button" class="navbar__mobile-link navbar__mobile-link--button" data-sort="toprated">Top Rated</button>
+      <button type="button" class="navbar__mobile-link navbar__mobile-link--button" data-sort="nowplaying">Now Playing</button>
+      <a href="#watchlist-section" class="navbar__mobile-link" data-nav="watchlist">Watchlist</a>
+    </div> -->
+  </header>
+
+  <!-- ============================== HERO =============================== -->
+  <section class="hero" id="top">
+    <p class="brand-mark">CYBERMOVIES</p>
+    <h1 class="site-title">Discover your next movie.</h1>
+    <p class="site-subtitle">Search from the navigation bar, or browse live movie recommendations that update from TMDB.</p>
+  </section>
+
+  <main class="page">
+
+    <!-- =========================== SEARCH RESULTS =========================== -->
+    <!-- This section is first so search results take priority over recommendations. -->
+    <section id="search-results-section" class="search-results-section" aria-label="Search results" hidden>
+      <div class="section-kicker">SEARCH</div>
+      <h2 id="search-results-heading" class="section-heading">Search results</h2>
+
+      <div class="status-panel" aria-live="polite">
+        <div id="loading-indicator" class="loading-indicator" hidden>
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Loading movies&hellip;</span>
+        </div>
+        <div id="error-message" class="error-message" role="alert" hidden></div>
+        <div id="empty-state" class="empty-state" hidden></div>
+      </div>
+
+      <div id="results-meta" class="results-meta" hidden></div>
+      <ul id="results-grid" class="results-grid" hidden></ul>
+
+      <nav id="pagination" class="pagination" aria-label="Search result pages" hidden>
+        <button type="button" id="prev-page-button" class="pagination-button" disabled>
+          &larr; Previous
+        </button>
+        <span id="page-indicator" class="page-indicator">Page 1</span>
+        <button type="button" id="next-page-button" class="pagination-button" disabled>
+          Next &rarr;
+        </button>
+      </nav>
+    </section>
+
+    <!-- ========================= FEATURED / LATEST ======================== -->
+    <section id="featured-section" class="featured-section" aria-label="Featured movie" hidden>
+      <div class="section-kicker">LIVE FROM TMDB</div>
+      <h2 class="section-heading">Featured Tonight</h2>
+      <div id="featured-loading" class="mini-loading" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Finding something great&hellip;</span>
+      </div>
+      <article id="featured-card" class="featured-card" hidden></article>
+    </section>
+
+    <!-- ============================= DISCOVER ============================== -->
+    <section id="discover-section" class="discover-section" aria-label="Discover movies" hidden>
+      <div class="discover-section__head">
+        <div>
+          <div class="section-kicker">RECOMMENDATIONS</div>
+          <h2 class="section-heading">Discover Movies</h2>
+          <p class="section-subheading">Live results from TMDB. No hard-coded movie list.</p>
+        </div>
+        <div class="sort-tabs" id="sort-tabs" role="tablist" aria-label="Movie recommendations">
+          <!-- <button type="button" class="sort-tab is-active" data-sort="nowplaying" role="tab" aria-selected="true">Now Playing</button>
+          <button type="button" class="sort-tab" data-sort="discover" role="tab" aria-selected="false">Discover</button>
+          <button type="button" class="sort-tab" data-sort="popular" role="tab" aria-selected="false">Popular</button>
+          <button type="button" class="sort-tab" data-sort="toprated" role="tab" aria-selected="false">Top Rated</button> -->
+        </div>
+      </div>
+
+      <div id="genre-chips" class="genre-chips" hidden></div>
+
+      <div id="discover-loading" class="mini-loading" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Updating recommendations&hellip;</span>
+      </div>
+      <div id="discover-empty" class="empty-state" hidden></div>
+      <ul id="discover-grid" class="results-grid" hidden></ul>
+    </section>
+
+    <!-- ============================= WATCHLIST ============================== -->
+    <section id="watchlist-section" class="watchlist-section" aria-label="Your watchlist" hidden>
+      <div class="section-kicker">SAVED</div>
+      <h2 class="section-heading">My Watchlist</h2>
+      <p class="section-subheading">Movies you've saved to watch later, stored on this device.</p>
+      <div id="watchlist-empty" class="empty-state" hidden>Your watchlist is empty. Tap the heart on any movie to save it here.</div>
+      <ul id="watchlist-grid" class="results-grid" hidden></ul>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Movie data and images provided by The Movie Database (TMDB). This is a student project, not affiliated with TMDB.</p>
+  </footer>
+
+  <!-- ============================ DETAILS MODAL ============================ -->
+  <div id="movie-modal" class="modal" hidden>
+    <div class="modal__backdrop" id="modal-backdrop"></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button type="button" id="modal-close" class="modal__close" aria-label="Close details">&times;</button>
+      <div id="modal-body" class="modal__body"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
